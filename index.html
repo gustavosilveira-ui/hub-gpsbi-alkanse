@@ -347,6 +347,51 @@ canvas{max-width:100%}
 .action-empty{border:1px dashed var(--border2);border-radius:10px;padding:1.2rem;text-align:center;color:var(--text3);font-size:11px}
 @media(max-width:1100px){.actions-grid{grid-template-columns:repeat(2,1fr)}.action-layout{grid-template-columns:1fr}}
 
+
+/* HOME EXECUTIVA / AGENDA */
+.s-home{padding:.45rem 0;border-bottom:1px solid var(--border);background:rgba(18,184,232,.025)}
+.home-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1rem}
+.home-card{background:var(--navy3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;position:relative;overflow:hidden}
+.home-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kl,var(--accent))}
+.home-label{font-size:8.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px}
+.home-value{font-size:22px;font-weight:800;font-family:'DM Mono',monospace;color:var(--text)}
+.home-sub{font-size:9px;color:var(--text3);margin-top:3px}
+.home-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:1rem;margin-bottom:1rem}
+.home-panel{background:var(--navy3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;min-width:0}
+.home-list{display:grid;gap:8px;margin-top:.7rem}
+.home-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:10px;padding:.7rem .8rem}
+.home-row strong{font-size:12px;color:var(--text)}
+.home-row span{font-size:10px;color:var(--text3)}
+.home-pill{font-size:10px;font-weight:700;border-radius:999px;padding:4px 8px;border:1px solid rgba(18,184,232,.25);background:rgba(18,184,232,.08);color:var(--accent);white-space:nowrap}
+.home-insight{background:linear-gradient(135deg,rgba(18,184,232,.12),rgba(6,232,196,.06));border:1px solid rgba(18,184,232,.22);border-radius:12px;padding:1rem;margin-top:.75rem;color:var(--text2);font-size:12px;line-height:1.55}
+.agenda-layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:1rem}
+.agenda-form,.agenda-board{background:var(--navy3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem}
+.agenda-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1rem}
+.agenda-kpi{background:var(--navy3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;position:relative;overflow:hidden}
+.agenda-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--kl,var(--accent))}
+.agenda-field label{display:block;font-size:8.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.9px;margin:0 0 5px}
+.agenda-input,.agenda-select,.agenda-area{width:100%;background:rgba(255,255,255,.045);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'Sora',sans-serif;font-size:11px;outline:none;padding:9px 10px;margin-bottom:.75rem}
+.agenda-area{min-height:82px;resize:vertical;line-height:1.45}
+.agenda-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.agenda-btn{border:1px solid rgba(18,184,232,.28);background:rgba(18,184,232,.12);color:var(--accent);border-radius:8px;padding:8px 11px;font-size:10.5px;font-weight:700;font-family:'Sora',sans-serif;cursor:pointer;transition:.15s}
+.agenda-btn:hover{background:var(--accent);color:#071420}
+.agenda-btn.alt{background:rgba(255,255,255,.04);border-color:var(--border2);color:var(--text2)}
+.agenda-btn.danger{border-color:rgba(232,75,75,.35);color:var(--neg);background:rgba(232,75,75,.08)}
+.agenda-filters{display:flex;gap:6px;flex-wrap:wrap;margin:.75rem 0}
+.agenda-chip{border:1px solid var(--border2);background:transparent;color:var(--text2);border-radius:999px;font-size:10px;padding:5px 10px;cursor:pointer}
+.agenda-chip.active{background:rgba(18,184,232,.16);border-color:rgba(18,184,232,.35);color:var(--accent)}
+.agenda-list{display:grid;gap:8px}
+.agenda-card{border:1px solid var(--border);background:rgba(255,255,255,.035);border-radius:10px;padding:.85rem}
+.agenda-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:.35rem}
+.agenda-title{font-size:12px;font-weight:800;color:var(--text)}
+.agenda-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:9px;color:var(--text3);margin:.45rem 0}
+.agenda-text{font-size:11px;color:var(--text2);line-height:1.45;white-space:pre-wrap}
+.agenda-status{font-size:8.5px;border-radius:999px;padding:2px 7px;border:1px solid rgba(18,184,232,.22);color:var(--accent);background:rgba(18,184,232,.08);white-space:nowrap}
+.agenda-mini{border:1px solid var(--border2);background:rgba(255,255,255,.035);color:var(--text2);border-radius:6px;padding:5px 7px;font-size:9px;cursor:pointer;margin:4px 4px 0 0}
+.agenda-mini:hover{border-color:var(--accent);color:var(--accent)}
+.agenda-empty{border:1px dashed var(--border2);border-radius:10px;padding:1rem;text-align:center;color:var(--text3);font-size:11px}
+@media(max-width:1100px){.home-grid,.agenda-grid{grid-template-columns:repeat(2,1fr)}.home-layout,.agenda-layout{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -398,9 +443,12 @@ canvas{max-width:100%}
       <div class="s-cl-name" id="sClientName">Alkanse</div>
       <span class="s-badge" id="sBadge">● Online</span>
     </div>
+    <div class="s-home">
+      <div class="nav-item active" onclick="goTo('home',this)"><span class="nav-ico">🏠</span>Home Executiva</div>
+    </div>
     <nav class="s-nav">
       <span class="s-section">Painéis</span>
-      <div class="nav-item active" onclick="goTo('vendas',this)"><span class="nav-ico">📈</span>Vendas</div>
+      <div class="nav-item" onclick="goTo('vendas',this)"><span class="nav-ico">📈</span>Vendas</div>
       <div class="nav-item" onclick="goTo('orcamentos',this)"><span class="nav-ico">📋</span>Orçamentos</div>
       <div class="nav-item" onclick="goTo('projetos',this)"><span class="nav-ico">🏗️</span>Projetos</div>
       <div class="nav-item" onclick="goTo('mkp',this)"><span class="nav-ico">🏪</span>Proj. Mkp</div>
@@ -408,6 +456,7 @@ canvas{max-width:100%}
       <div class="nav-item" onclick="goTo('manutencao',this)"><span class="nav-ico">🔧</span>Manutenção</div>
       <div class="nav-item" onclick="goTo('financeiro',this)"><span class="nav-ico">💰</span>Financeiro</div>
       <div class="nav-item" onclick="goTo('anotacoes',this)"><span class="nav-ico">📝</span>Anotações</div>
+      <div class="nav-item" onclick="goTo('agenda',this)"><span class="nav-ico">📅</span>Agenda</div>
     </nav>
     <div class="s-bottom">
       <div class="s-user">
@@ -421,8 +470,8 @@ canvas{max-width:100%}
   <div class="main">
     <div class="topbar">
       <div>
-        <div class="pg-title" id="pgTitle">Vendas</div>
-        <div class="pg-sub" id="pgSub">Faturamento · Alkanse · ao vivo</div>
+        <div class="pg-title" id="pgTitle">Home Executiva</div>
+        <div class="pg-sub" id="pgSub">Visão geral da operação · GPSBI</div>
       </div>
       <div class="topbar-right">
         <button class="tbtn" onclick="reloadSection()" title="Atualizar dados">↻ Atualizar</button>
@@ -430,7 +479,8 @@ canvas{max-width:100%}
       </div>
     </div>
     <div class="content">
-      <div class="section active" id="sec-vendas"></div>
+      <div class="section active" id="sec-home"></div>
+      <div class="section" id="sec-vendas"></div>
       <div class="section" id="sec-orcamentos"></div>
       <div class="section" id="sec-projetos"></div>
       <div class="section" id="sec-mkp"></div>
@@ -438,6 +488,7 @@ canvas{max-width:100%}
       <div class="section" id="sec-manutencao"></div>
       <div class="section" id="sec-financeiro"></div>
       <div class="section" id="sec-anotacoes"></div>
+      <div class="section" id="sec-agenda"></div>
     </div>
   </div>
 </div>
@@ -541,14 +592,14 @@ function doLogout(){
   document.getElementById('app').style.display='none';
   document.getElementById('loginScreen').style.display='flex';
   document.getElementById('lu').value=''; document.getElementById('lp').value='';
-  DATA={}; currentSection='vendas'; activeFilter=''; activeMonthFilter=''; activeGraphPeriodo='2025-2026';
+  DATA={}; currentSection='home'; activeFilter=''; activeMonthFilter=''; activeGraphPeriodo='2025-2026';
 }
 
 /* ══════════════════════════════════
    DATA LAYER — gviz live
 ══════════════════════════════════ */
 let DATA = {};
-let currentSection = 'vendas';
+let currentSection = 'home';
 let activeFilter   = '';
 let activeMonthFilter = '';
 let activeGraphPeriodo = '2025-2026';
@@ -608,7 +659,7 @@ async function loadTab(key, forceReload=false){
 }
 
 async function iniciar(){
-  await renderSection('vendas');
+  await renderSection('home');
 }
 
 async function reloadSection(){
@@ -620,6 +671,7 @@ async function reloadSection(){
    NAV
 ══════════════════════════════════ */
 const PAGE_META = {
+  home:       ['Home Executiva','Visão geral da operação · GPSBI'],
   vendas:     ['Vendas','Faturamento e notas fiscais · Alkanse · ao vivo'],
   orcamentos: ['Orçamentos','Controle de propostas · ao vivo'],
   projetos:   ['Projetos','Gestão e cronogramas · ao vivo'],
@@ -628,6 +680,7 @@ const PAGE_META = {
   manutencao: ['Manutenção','Ordens de serviço · ao vivo'],
   financeiro: ['Financeiro','Fluxo e lançamentos · ao vivo'],
   anotacoes:  ['Anotações','Central de tarefas, follow-ups e decisões · GPSBI'],
+  agenda:     ['Agenda','Agendador de tarefas e compromissos · GPSBI'],
 };
 
 function goTo(sec, el){
@@ -644,7 +697,9 @@ function goTo(sec, el){
 
 async function renderSection(key){
   try {
+    if(key === 'home'){ await renderHomeExecutiva(); return; }
     if(key === 'anotacoes'){ renderAnotacoesPage(); return; }
+    if(key === 'agenda'){ renderAgendaPage(); return; }
     const {cols, rows} = await loadTab(key);
     switch(key){
       case 'vendas':     renderVendas(cols, rows);     break;
@@ -655,6 +710,7 @@ async function renderSection(key){
       case 'manutencao': renderManutencao(cols, rows); break;
       case 'financeiro': renderFinanceiro(cols, rows); break;
       case 'anotacoes':  renderAnotacoesPage();          break;
+      case 'agenda':     renderAgendaPage();             break;
     }
   } catch(e) {
     document.getElementById('sec-'+key).innerHTML = `
@@ -1186,6 +1242,133 @@ function renderAnotacoesPage(){
     <div class="action-diary">
       <div class="card-hdr"><div><div class="card-title">Diário Executivo</div><div class="card-sub">Últimas ações resolvidas/concluídas para manter histórico de decisões</div></div></div>
       <div class="diary-list">${diary.length?diary.map(n=>`<div class="diary-item"><div class="diary-date">✓ ${escapeHtml(n.statusAtualizadoEm || n.criadoEmBR || '-')}</div><div class="diary-text"><strong>${escapeHtml(n.titulo || n.tipo || 'Ação')}</strong><br>${escapeHtml((n.texto || '').slice(0,120))}</div></div>`).join(''):'<div class="action-empty">Nenhuma ação concluída ainda.</div>'}</div>
+    </div>`;
+}
+
+
+
+/* ══════════════════════════════════
+   HOME EXECUTIVA GPSBI
+══════════════════════════════════ */
+async function renderHomeExecutiva(){
+  const sec=document.getElementById('sec-home');
+  if(!sec) return;
+  sec.innerHTML='<div class="err-msg" style="color:var(--text2);border-color:var(--border2);background:var(--navy3)">Carregando visão executiva...</div>';
+  const keys=['vendas','orcamentos','projetos','mkp','tecnicos','manutencao','financeiro'];
+  const loaded=await Promise.allSettled(keys.map(k=>loadTab(k)));
+  const map={}; keys.forEach((k,i)=>{ map[k]=loaded[i].status==='fulfilled'?loaded[i].value:{cols:[],rows:[]}; });
+
+  const vendas=map.vendas.rows||[];
+  const cFat='FATURAMENTO BRUTO (TOTAL)', cData='DATA', cCli='CLIENTE';
+  const vendasPeriodo=filterRowsByPeriodoBase(vendas,cData,'2025-2026');
+  const receita=vendasPeriodo.reduce((a,r)=>a+pv(r[cFat]),0);
+  const clientes=new Set(vendasPeriodo.map(r=>r[cCli]).filter(Boolean)).size;
+  const mkMeses={}; vendasPeriodo.forEach(r=>{const mk=getMonthKey(r[cData]); if(mk) mkMeses[mk]=(mkMeses[mk]||0)+pv(r[cFat]);});
+  const meses=Object.keys(mkMeses).sort((a,b)=>{const [am,ay]=a.split('/').map(Number),[bm,by]=b.split('/').map(Number);return ay!==by?ay-by:am-bm});
+  const ultimo=meses[meses.length-1];
+  const atual=mkMeses[ultimo]||0;
+  const anterior=mkMeses[prevMonthKey(ultimo)]||0;
+  const varMes=anterior?((atual-anterior)/anterior*100):0;
+
+  const actions=(typeof getAllNotesForActions==='function'?getAllNotesForActions():[]).filter(n=>!isArchivedAction(n));
+  const pend=actions.filter(n=>(n.status||'Pendente')==='Pendente').length;
+  const concl=actions.filter(n=>actionIsDone(n.status)).length;
+  const agenda=getAgendaTasks();
+  const hojeIso=new Date().toISOString().slice(0,10);
+  const agendaHoje=agenda.filter(t=>t.data===hojeIso && t.status!=='Concluído').length;
+
+  const financeiro=map.financeiro.rows||[];
+  const saldo=financeiro.reduce((a,r)=>a+pv(r['Crédito'])-pv(r['Débito']),0);
+  const tecnicosUnicos=new Set((map.tecnicos.rows||[]).map(r=>r['Nome']).filter(Boolean)).size;
+
+  sec.innerHTML=`
+    <div class="home-grid anim">
+      <div class="home-card" style="--kl:var(--pos)"><div class="home-label">Receita 2025–2026</div><div class="home-value" style="color:var(--pos)">${fmtR(receita)}</div><div class="home-sub">${vendasPeriodo.length.toLocaleString('pt-BR')} registros de vendas</div></div>
+      <div class="home-card" style="--kl:var(--accent)"><div class="home-label">Clientes</div><div class="home-value" style="color:var(--accent)">${clientes}</div><div class="home-sub">únicos no período</div></div>
+      <div class="home-card" style="--kl:${varMes>=0?'var(--pos)':'var(--neg)'}"><div class="home-label">Último mês vs anterior</div><div class="home-value" style="color:${varMes>=0?'var(--pos)':'var(--neg)'}">${varMes>=0?'+':''}${varMes.toFixed(1)}%</div><div class="home-sub">${ultimo?getMonthLabel(ultimo)+'/'+ultimo.split('/')[1]:''}</div></div>
+      <div class="home-card" style="--kl:var(--gold)"><div class="home-label">Saldo financeiro</div><div class="home-value" style="color:${saldo>=0?'var(--pos)':'var(--neg)'}">${fmtR(saldo)}</div><div class="home-sub">base financeira carregada</div></div>
+    </div>
+    <div class="home-layout">
+      <div class="home-panel">
+        <div class="card-title">Resumo dos painéis</div>
+        <div class="home-list">
+          <div class="home-row"><div><strong>📋 Orçamentos</strong><br><span>Propostas registradas</span></div><div class="home-pill">${(map.orcamentos.rows||[]).length.toLocaleString('pt-BR')}</div></div>
+          <div class="home-row"><div><strong>🏗️ Projetos</strong><br><span>Projetos em base</span></div><div class="home-pill">${(map.projetos.rows||[]).length.toLocaleString('pt-BR')}</div></div>
+          <div class="home-row"><div><strong>🏪 Marketplace</strong><br><span>Projetos MKP</span></div><div class="home-pill">${(map.mkp.rows||[]).length.toLocaleString('pt-BR')}</div></div>
+          <div class="home-row"><div><strong>👷 Técnicos</strong><br><span>Equipe única identificada</span></div><div class="home-pill">${tecnicosUnicos}</div></div>
+          <div class="home-row"><div><strong>🔧 Manutenção</strong><br><span>Ordens registradas</span></div><div class="home-pill">${(map.manutencao.rows||[]).length.toLocaleString('pt-BR')}</div></div>
+        </div>
+      </div>
+      <div class="home-panel">
+        <div class="card-title">Central de gestão</div>
+        <div class="home-list">
+          <div class="home-row"><div><strong>📝 Ações pendentes</strong><br><span>Anotações/tarefas abertas</span></div><div class="home-pill">${pend}</div></div>
+          <div class="home-row"><div><strong>✅ Ações concluídas</strong><br><span>Histórico executivo</span></div><div class="home-pill">${concl}</div></div>
+          <div class="home-row"><div><strong>📅 Agenda de hoje</strong><br><span>Tarefas programadas para hoje</span></div><div class="home-pill">${agendaHoje}</div></div>
+        </div>
+        <div class="home-insight"><strong>🧠 GPSBI Insight</strong><br>${varMes<0?'Receita do último mês está abaixo do mês anterior. Vale abrir uma ação para investigar canal, cliente ou ticket médio.':'Último mês apresenta evolução positiva. Vale registrar quais ações comerciais contribuíram para preservar o aprendizado.'}</div>
+      </div>
+    </div>`;
+}
+
+/* ══════════════════════════════════
+   AGENDA / AGENDADOR DE TAREFAS
+══════════════════════════════════ */
+const AGENDA_KEY='gpsbi_agenda_alkanse_v1';
+let agendaFilter='Todos';
+function getAgendaTasks(){try{return JSON.parse(localStorage.getItem(AGENDA_KEY)||'[]')}catch(e){return[]}}
+function setAgendaTasks(tasks){localStorage.setItem(AGENDA_KEY,JSON.stringify(tasks||[]))}
+function agendaIsDone(s){return s==='Concluído'||s==='Cancelado'}
+function saveAgendaTask(){
+  const titulo=(document.getElementById('agTitulo')?.value||'').trim();
+  if(!titulo){alert('Informe o título da tarefa.');return;}
+  const t={id:'AG-'+Date.now(),titulo,classe:document.getElementById('agClasse')?.value||'Tarefa',prioridade:document.getElementById('agPrioridade')?.value||'Média',status:document.getElementById('agStatus')?.value||'Pendente',responsavel:(document.getElementById('agResp')?.value||'').trim(),data:document.getElementById('agData')?.value||'',hora:document.getElementById('agHora')?.value||'',texto:(document.getElementById('agTexto')?.value||'').trim(),criadoEm:new Date().toLocaleString('pt-BR')};
+  const tasks=getAgendaTasks(); tasks.unshift(t); setAgendaTasks(tasks); renderAgendaPage();
+}
+function updateAgendaStatus(id,status){const tasks=getAgendaTasks();const t=tasks.find(x=>String(x.id)===String(id));if(t){t.status=status;t.atualizadoEm=new Date().toLocaleString('pt-BR');setAgendaTasks(tasks);renderAgendaPage();}}
+function deleteAgendaTask(id){if(!confirm('Excluir esta tarefa da agenda?'))return;setAgendaTasks(getAgendaTasks().filter(t=>String(t.id)!==String(id)));renderAgendaPage();}
+function setAgendaFilter(f){agendaFilter=f;renderAgendaPage();}
+function renderAgendaPage(){
+  const sec=document.getElementById('sec-agenda'); if(!sec) return;
+  const tasks=getAgendaTasks();
+  const hoje=new Date().toISOString().slice(0,10);
+  const total=tasks.filter(t=>!agendaIsDone(t.status)).length;
+  const hojeQtd=tasks.filter(t=>t.data===hoje&&!agendaIsDone(t.status)).length;
+  const atrasadas=tasks.filter(t=>t.data&&t.data<hoje&&!agendaIsDone(t.status)).length;
+  const feitas=tasks.filter(t=>t.status==='Concluído').length;
+  const filters=['Todos','Hoje','Atrasadas','Pendente','Em andamento','Concluído','Cancelado'];
+  let filtered=tasks;
+  if(agendaFilter==='Hoje') filtered=tasks.filter(t=>t.data===hoje);
+  else if(agendaFilter==='Atrasadas') filtered=tasks.filter(t=>t.data&&t.data<hoje&&!agendaIsDone(t.status));
+  else if(agendaFilter!=='Todos') filtered=tasks.filter(t=>(t.status||'Pendente')===agendaFilter);
+  sec.innerHTML=`
+    <div class="agenda-grid anim">
+      <div class="agenda-kpi" style="--kl:var(--accent)"><div class="home-label">Abertas</div><div class="home-value" style="color:var(--accent)">${total}</div></div>
+      <div class="agenda-kpi" style="--kl:var(--gold)"><div class="home-label">Hoje</div><div class="home-value" style="color:var(--gold)">${hojeQtd}</div></div>
+      <div class="agenda-kpi" style="--kl:var(--neg)"><div class="home-label">Atrasadas</div><div class="home-value" style="color:var(--neg)">${atrasadas}</div></div>
+      <div class="agenda-kpi" style="--kl:var(--pos)"><div class="home-label">Concluídas</div><div class="home-value" style="color:var(--pos)">${feitas}</div></div>
+    </div>
+    <div class="agenda-layout">
+      <div class="agenda-form">
+        <div class="card-title" style="margin-bottom:.8rem">Nova tarefa agendada</div>
+        <div class="agenda-field"><label>Título</label><input class="agenda-input" id="agTitulo" placeholder="Ex: Retornar análise comercial"></div>
+        <div class="agenda-two"><div class="agenda-field"><label>Classificação</label><select class="agenda-select" id="agClasse"><option>Tarefa</option><option>Reunião</option><option>Follow-up</option><option>Cobrança</option><option>Análise</option><option>Decisão</option></select></div><div class="agenda-field"><label>Prioridade</label><select class="agenda-select" id="agPrioridade"><option>Baixa</option><option selected>Média</option><option>Alta</option><option>Urgente</option></select></div></div>
+        <div class="agenda-two"><div class="agenda-field"><label>Status</label><select class="agenda-select" id="agStatus"><option>Pendente</option><option>Em andamento</option><option>Concluído</option><option>Cancelado</option></select></div><div class="agenda-field"><label>Responsável</label><input class="agenda-input" id="agResp" placeholder="Nome"></div></div>
+        <div class="agenda-two"><div class="agenda-field"><label>Data</label><input class="agenda-input" type="date" id="agData"></div><div class="agenda-field"><label>Hora</label><input class="agenda-input" type="time" id="agHora"></div></div>
+        <div class="agenda-field"><label>Observação</label><textarea class="agenda-area" id="agTexto" placeholder="Detalhe o que precisa ser feito..."></textarea></div>
+        <button class="agenda-btn" onclick="saveAgendaTask()">Salvar tarefa</button>
+      </div>
+      <div class="agenda-board">
+        <div class="card-hdr"><div><div class="card-title">Agenda de acompanhamento</div><div class="card-sub">Classifique, acompanhe e conclua as tarefas</div></div></div>
+        <div class="agenda-filters">${filters.map(f=>`<button class="agenda-chip ${agendaFilter===f?'active':''}" onclick="setAgendaFilter('${f}')">${f}</button>`).join('')}</div>
+        <div class="agenda-list">${filtered.length?filtered.map(t=>`
+          <div class="agenda-card">
+            <div class="agenda-top"><div class="agenda-title">${escapeHtml(t.titulo)}</div><span class="agenda-status">${escapeHtml(t.status||'Pendente')}</span></div>
+            <div class="agenda-text">${escapeHtml(t.texto||'')}</div>
+            <div class="agenda-meta"><span>🏷 ${escapeHtml(t.classe||'-')}</span><span>⚡ ${escapeHtml(t.prioridade||'-')}</span>${t.responsavel?`<span>👤 ${escapeHtml(t.responsavel)}</span>`:''}${t.data?`<span>📅 ${escapeHtml(t.data)}</span>`:''}${t.hora?`<span>⏰ ${escapeHtml(t.hora)}</span>`:''}</div>
+            <button class="agenda-mini" onclick="updateAgendaStatus('${t.id}','Pendente')">Pendente</button><button class="agenda-mini" onclick="updateAgendaStatus('${t.id}','Em andamento')">Em andamento</button><button class="agenda-mini" onclick="updateAgendaStatus('${t.id}','Concluído')">Concluído</button><button class="agenda-mini" onclick="updateAgendaStatus('${t.id}','Cancelado')">Cancelar</button><button class="agenda-mini danger" onclick="deleteAgendaTask('${t.id}')">Excluir</button>
+          </div>`).join(''):'<div class="agenda-empty">Nenhuma tarefa encontrada para esse filtro.</div>'}</div>
+      </div>
     </div>`;
 }
 
