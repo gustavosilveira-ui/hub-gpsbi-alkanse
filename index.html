@@ -129,7 +129,7 @@ html,body{font-family:'Sora',sans-serif;background:var(--navy);color:var(--text)
 
 /* EVOLUÇÃO */
 .evol-wrap{overflow-x:auto;padding-bottom:.5rem}
-.evol-chart{display:flex;align-items:flex-end;gap:5px;min-width:max-content;padding:.5rem 0 0}
+.evol-chart{display:flex;align-items:flex-end;gap:4px;min-width:max-content;padding:.5rem 0 0}
 .evol-col{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
 .evol-col:hover .evol-bar{filter:brightness(1.4)}
 .evol-delta{font-size:9px;font-weight:600;line-height:1}
@@ -556,7 +556,11 @@ function renderVendas(cols, allRows){
   const fatMes={};
   rows.forEach(r=>{ const mk=getMonthKey(r[cData]); if(mk) fatMes[mk]=(fatMes[mk]||0)+pv(r[cFat]); });
 
-  const meses=Object.keys(fatMes).sort();
+  // Ordenação CRONOLÓGICA: por ano primeiro, depois por mês
+  const meses=Object.keys(fatMes).sort((a,b)=>{
+    const [maM,maY]=a.split('/'); const [mbM,mbY]=b.split('/');
+    return parseInt(maY)!==parseInt(mbY) ? parseInt(maY)-parseInt(mbY) : parseInt(maM)-parseInt(mbM);
+  });
   const lastMes=meses[meses.length-1]||null;
   const fatTotal=rows.reduce((a,r)=>a+pv(r[cFat]),0);
   const nfs=rows.length;
@@ -655,7 +659,7 @@ function renderVendas(cols, allRows){
   // Evolução
   const maxF=Math.max(...Object.values(fatMes),1);
   const BAR=90; let prevAno=null;
-  document.getElementById('evolChart').innerHTML=meses.map(mk=>{
+  document.getElementById('evolChart').innerHTML=meses.map((mk,i)=>{
     const val=fatMes[mk]||0;
     const prev=fatMesAll[prevMonthKey(mk)]||0;
     const pct=prev>0?(val-prev)/prev*100:null;
@@ -665,13 +669,16 @@ function renderVendas(cols, allRows){
     const ud=pct!=null?(pct>=0?'↑':'↓'):'';
     const cls=pct!=null?(pct>=0?'up':'dn'):'';
     const [mm,yy]=mk.split('/');
-    const showAno=yy!==prevAno; prevAno=yy;
-    return `<div class="evol-col" title="${getMonthLabel(mk)}/${yy}: ${fmtR(val)}">
-      <div class="evol-delta ${cls}">${ps} ${ud}</div>
+    const isNewYear=yy!==prevAno;
+    prevAno=yy;
+    // Separador visual entre anos
+    const sep=isNewYear&&i>0?`<div style="width:1px;height:${BAR+50}px;background:rgba(255,255,255,0.08);align-self:flex-end;margin:0 2px;flex-shrink:0"></div>`:'';
+    return sep+`<div class="evol-col" title="${getMonthLabel(mk)}/${yy}: ${fmtR(val)}">
+      <div class="evol-delta ${cls}">${ps} <span style="font-size:8px">${ud}</span></div>
       <div class="evol-val">${fmtR(val).replace('R$','')}</div>
       <div class="evol-bar${isLast?' hl':''}" style="height:${h}px"></div>
       <div class="evol-mes">${getMonthLabel(mk)}</div>
-      <div class="evol-ano">${showAno?yy:''}</div>
+      <div class="evol-ano" style="font-size:8px;color:${isNewYear?'var(--accent)':'var(--text3)'};font-weight:${isNewYear?'600':'400'};opacity:1">${yy}</div>
     </div>`;
   }).join('');
 
