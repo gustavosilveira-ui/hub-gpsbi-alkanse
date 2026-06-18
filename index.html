@@ -629,6 +629,28 @@ function clearVndSearch(){
   activeFilter=''; renderVendas(DATA.vendas.cols,DATA.vendas.rows);
 }
 
+  function filtrarMesGrafico(mk){
+  const [mm, yyyy] = mk.split('/');
+
+  const primeiroDia = `${yyyy}-${mm}-01`;
+  const ultimoDiaNum = new Date(Number(yyyy), Number(mm), 0).getDate();
+  const ultimoDia = `${yyyy}-${mm}-${String(ultimoDiaNum).padStart(2,'0')}`;
+
+  vndPeriodo = 'custom';
+  vndDataDe = primeiroDia;
+  vndDataAte = ultimoDia;
+
+  const de = document.getElementById('vndDe');
+  const ate = document.getElementById('vndAte');
+
+  if(de) de.value = vndDataDe;
+  if(ate) ate.value = vndDataAte;
+
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
+
+  renderVendas(DATA.vendas.cols, DATA.vendas.rows);
+}
+  
 /* ══════════════════════════════════
    VENDAS
 ══════════════════════════════════ */
@@ -813,7 +835,7 @@ document.getElementById('evolChart').innerHTML = meses.map((mk, i) => {
     : '';
 
   return sep + `
-    <div class="evol-col" title="${mesAtual}/${yy}: R$ ${fmtRFull(val)}">
+    <div class="evol-col" title="${mesAtual}/${yy}: R$ ${fmtRFull(val)}" onclick="filtrarMesGrafico('${mk}')">
       <div class="evol-delta ${cls}">${ps} <span style="font-size:8px">${ud}</span></div>
       <div class="evol-val">${fmtRFull(val)}</div>
       <div class="evol-bar${isLast ? ' hl' : ''}" style="height:${h}px"></div>
