@@ -570,10 +570,7 @@ function sumMonthUntilDay(rows, cData, cFat, monthKey, limitDay){
 
 function fmtRFull(n){
   const v = typeof n === 'number' ? n : pv(n);
-  return v.toLocaleString('pt-BR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+  return Math.round(v).toLocaleString('pt-BR');
 }
 
 /* ══════════════════════════════════
