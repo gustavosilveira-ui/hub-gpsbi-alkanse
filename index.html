@@ -249,6 +249,43 @@ html,body{font-family:'Sora',sans-serif;background:var(--navy);color:var(--text)
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
 @media(max-width:768px){.sidebar{display:none}}
 canvas{max-width:100%}
+
+
+/* ANOTAÇÕES GPSBI */
+.notes-backdrop{position:fixed;inset:0;background:rgba(4,9,18,.58);backdrop-filter:blur(3px);z-index:7000;display:none;opacity:0;transition:opacity .18s}
+.notes-backdrop.open{display:block;opacity:1}
+.notes-panel{position:fixed;top:0;right:0;width:420px;max-width:96vw;height:100vh;background:var(--navy2);border-left:1px solid var(--border2);box-shadow:-24px 0 60px rgba(0,0,0,.38);z-index:7001;transform:translateX(105%);transition:transform .22s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column}
+.notes-panel.open{transform:translateX(0)}
+.notes-head{padding:1rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(18,184,232,.03)}
+.notes-title{font-size:14px;font-weight:700;color:var(--text)}
+.notes-sub{font-size:9px;color:var(--text3);margin-top:2px}
+.notes-close{background:none;border:1px solid var(--border2);border-radius:7px;color:var(--text2);cursor:pointer;padding:4px 8px;font-size:13px}
+.notes-close:hover{color:var(--neg);border-color:rgba(232,75,75,.35)}
+.notes-body{padding:1rem;overflow-y:auto;flex:1}
+.notes-box{background:var(--navy3);border:1px solid var(--border);border-radius:var(--radius);padding:.85rem;margin-bottom:.85rem}
+.notes-lbl{display:block;font-size:8.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px}
+.notes-input,.notes-area,.notes-select{width:100%;background:rgba(255,255,255,.045);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'Sora',sans-serif;font-size:11px;outline:none;padding:9px 10px;margin-bottom:.65rem}
+.notes-area{min-height:90px;resize:vertical;line-height:1.45}
+.notes-input:focus,.notes-area:focus,.notes-select:focus{border-color:var(--accent)}
+.notes-row{display:grid;grid-template-columns:1fr 130px;gap:8px}
+.notes-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.notes-btn{border:1px solid rgba(18,184,232,.28);background:rgba(18,184,232,.12);color:var(--accent);border-radius:8px;padding:8px 11px;font-size:10.5px;font-weight:700;font-family:'Sora',sans-serif;cursor:pointer;transition:.15s}
+.notes-btn:hover{background:var(--accent);color:#071420}
+.notes-btn.secondary{background:rgba(255,255,255,.04);border-color:var(--border2);color:var(--text2)}
+.notes-btn.secondary:hover{border-color:var(--accent);color:var(--accent);background:rgba(18,184,232,.08)}
+.notes-hint{font-size:9px;color:var(--text3);line-height:1.45;margin-top:.65rem}
+.notes-list-head{display:flex;align-items:center;justify-content:space-between;margin:.75rem 0 .5rem}
+.notes-list-title{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;font-weight:700}
+.note-card{background:var(--navy3);border:1px solid var(--border);border-radius:10px;padding:.75rem;margin-bottom:.55rem}
+.note-card.sent{border-color:rgba(18,184,232,.22)}
+.note-top{display:flex;justify-content:space-between;gap:8px;margin-bottom:.35rem}
+.note-date{font-size:9px;color:var(--text3);font-family:'DM Mono',monospace}
+.note-status{font-size:8.5px;border-radius:999px;padding:2px 7px;border:1px solid rgba(18,184,232,.22);color:var(--accent);background:rgba(18,184,232,.08);white-space:nowrap}
+.note-text{font-size:11px;color:var(--text2);line-height:1.5;white-space:pre-wrap;margin-bottom:.45rem}
+.note-meta{font-size:8.8px;color:var(--text3);display:flex;gap:8px;flex-wrap:wrap}
+.note-empty{border:1px dashed var(--border2);border-radius:10px;padding:1rem;text-align:center;color:var(--text3);font-size:11px}
+.notes-pill{display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(18,184,232,.22);background:rgba(18,184,232,.08);color:var(--accent);border-radius:999px;padding:4px 9px;font-size:10px;margin-top:6px}
+
 </style>
 </head>
 <body>
@@ -326,6 +363,7 @@ canvas{max-width:100%}
         <div class="pg-sub" id="pgSub">Faturamento · Alkanse · ao vivo</div>
       </div>
       <div class="topbar-right">
+        <button class="tbtn" onclick="openNotesPanel()" title="Anotações">📝 Anotações</button>
         <button class="tbtn" onclick="reloadSection()" title="Atualizar dados">↻ Atualizar</button>
         <div id="lastUpdate" style="font-size:9px;color:var(--text3)">Conectando...</div>
       </div>
@@ -343,11 +381,63 @@ canvas{max-width:100%}
 </div>
 </div>
 
+
+
+<!-- ANOTAÇÕES GPSBI -->
+<div class="notes-backdrop" id="notesBackdrop" onclick="closeNotesPanel()"></div>
+<aside class="notes-panel" id="notesPanel" aria-hidden="true">
+  <div class="notes-head">
+    <div>
+      <div class="notes-title">📝 Central de Anotações</div>
+      <div class="notes-sub">Registre decisões, pendências e envie follow-ups por e-mail.</div>
+    </div>
+    <button class="notes-close" onclick="closeNotesPanel()">✕</button>
+  </div>
+  <div class="notes-body">
+    <div class="notes-box">
+      <label class="notes-lbl">Contexto</label>
+      <input class="notes-input" id="noteContext" readonly />
+      <label class="notes-lbl">Anotação</label>
+      <textarea class="notes-area" id="noteText" placeholder="Ex: Validar queda de faturamento em junho com o comercial..."></textarea>
+      <div class="notes-row">
+        <div>
+          <label class="notes-lbl">Enviar para e-mail</label>
+          <input class="notes-input" id="noteEmail" placeholder="email@empresa.com.br" />
+        </div>
+        <div>
+          <label class="notes-lbl">Status</label>
+          <select class="notes-select" id="noteStatus">
+            <option value="Pendente">Pendente</option>
+            <option value="Em acompanhamento">Em acompanhamento</option>
+            <option value="Respondido">Respondido</option>
+            <option value="Concluído">Concluído</option>
+          </select>
+        </div>
+      </div>
+      <div class="notes-actions">
+        <button class="notes-btn" onclick="saveNote(false)">Salvar anotação</button>
+        <button class="notes-btn secondary" onclick="saveNote(true)">Salvar e enviar e-mail</button>
+      </div>
+      <div class="notes-hint">
+        Para salvar na nuvem e enviar e-mail, cole a URL do Web App no campo <strong>ANOTACOES_API_URL</strong> do código.
+        Enquanto isso, as anotações ficam salvas neste navegador.
+      </div>
+    </div>
+    <div class="notes-list-head">
+      <div class="notes-list-title">Histórico</div>
+      <button class="notes-btn secondary" onclick="loadNotes()" style="padding:5px 8px">↻ Atualizar</button>
+    </div>
+    <div id="notesList"><div class="note-empty">Nenhuma anotação ainda.</div></div>
+  </div>
+</aside>
+<iframe name="gpsbiNotesFrame" style="display:none"></iframe>
+
 <script>
 /* ══════════════════════════════════
    CONFIG — GOOGLE SHEETS (live)
 ══════════════════════════════════ */
 const SHEET_ID = '1YbJeKx7X2MuDbOhY-SPSYPmM1RfyFzHeL4OyBhn9fpo';
+const ANOTACOES_API_URL = ''; // Cole aqui a URL do Web App do Apps Script de anotações
 const GIDS = {
   vendas:     '1869405713',
   orcamentos: '558516829',
@@ -694,6 +784,140 @@ function clearVndSearch(){
   document.getElementById('vndSearch').value='';
   document.getElementById('vndClear').style.display='none';
   activeFilter=''; renderVendas(DATA.vendas.cols,DATA.vendas.rows);
+}
+
+
+
+/* ══════════════════════════════════
+   ANOTAÇÕES GPSBI
+══════════════════════════════════ */
+const NOTES_CLIENTE = 'Alkanse';
+const NOTES_LOCAL_KEY = 'gpsbi_notes_alkanse_v1';
+
+function getCurrentUserName(){
+  return document.getElementById('sUname')?.textContent || 'Usuário';
+}
+function getCurrentContext(){
+  const sec = PAGE_META[currentSection]?.[0] || currentSection || 'Painel';
+  const periodo = vndDataDe && vndDataAte ? `${vndDataDe} até ${vndDataAte}` : (vndPeriodo || 'Período atual');
+  const filtroMes = activeMonthFilter ? ` · mês clicado ${activeMonthFilter}` : '';
+  const clienteBusca = activeFilter ? ` · busca ${activeFilter}` : '';
+  return `${sec} · ${periodo}${filtroMes}${clienteBusca}`;
+}
+function openNotesPanel(){
+  document.getElementById('notesBackdrop').classList.add('open');
+  document.getElementById('notesPanel').classList.add('open');
+  document.getElementById('notesPanel').setAttribute('aria-hidden','false');
+  const ctx=document.getElementById('noteContext');
+  if(ctx) ctx.value=getCurrentContext();
+  loadNotes();
+}
+function closeNotesPanel(){
+  document.getElementById('notesBackdrop').classList.remove('open');
+  document.getElementById('notesPanel').classList.remove('open');
+  document.getElementById('notesPanel').setAttribute('aria-hidden','true');
+}
+function getLocalNotes(){
+  try { return JSON.parse(localStorage.getItem(NOTES_LOCAL_KEY) || '[]'); } catch(e){ return []; }
+}
+function setLocalNotes(notes){
+  localStorage.setItem(NOTES_LOCAL_KEY, JSON.stringify(notes || []));
+}
+function renderNotes(notes){
+  const wrap=document.getElementById('notesList');
+  if(!wrap) return;
+  if(!notes || !notes.length){
+    wrap.innerHTML='<div class="note-empty">Nenhuma anotação ainda.</div>';
+    return;
+  }
+  wrap.innerHTML=notes.slice().sort((a,b)=>String(b.criadoEm||'').localeCompare(String(a.criadoEm||''))).map(n=>`
+    <div class="note-card ${n.enviadoPara?'sent':''}">
+      <div class="note-top">
+        <div class="note-date">${n.criadoEmBR || n.criadoEm || '-'}</div>
+        <div class="note-status">${n.status || 'Pendente'}</div>
+      </div>
+      <div class="note-text">${escapeHtml(n.texto || '')}</div>
+      <div class="note-meta">
+        <span>👤 ${escapeHtml(n.usuario || '-')}</span>
+        <span>📍 ${escapeHtml(n.contexto || '-')}</span>
+        ${n.enviadoPara ? `<span>✉️ ${escapeHtml(n.enviadoPara)}</span>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+function escapeHtml(str){
+  return String(str).replace(/[&<>'"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;' }[c]));
+}
+function loadNotes(){
+  renderNotes(getLocalNotes());
+  if(!ANOTACOES_API_URL) return;
+  const cb='gpsbiNotesCb_'+Date.now();
+  window[cb]=function(resp){
+    try{
+      const cloudNotes = resp && resp.ok && Array.isArray(resp.notes) ? resp.notes : [];
+      if(cloudNotes.length){
+        setLocalNotes(cloudNotes);
+        renderNotes(cloudNotes);
+      }
+    } finally {
+      delete window[cb];
+      const s=document.getElementById(cb); if(s) s.remove();
+    }
+  };
+  const s=document.createElement('script');
+  s.id=cb;
+  s.src=`${ANOTACOES_API_URL}?action=list&cliente=${encodeURIComponent(NOTES_CLIENTE)}&callback=${cb}&_=${Date.now()}`;
+  document.body.appendChild(s);
+}
+function saveNote(sendEmail){
+  const text=(document.getElementById('noteText')?.value || '').trim();
+  const email=(document.getElementById('noteEmail')?.value || '').trim();
+  const status=document.getElementById('noteStatus')?.value || 'Pendente';
+  if(!text){ alert('Escreva uma anotação antes de salvar.'); return; }
+  if(sendEmail && !email){ alert('Informe um e-mail para envio.'); return; }
+
+  const now=new Date();
+  const note={
+    id:'NT-'+now.getTime(),
+    cliente:NOTES_CLIENTE,
+    usuario:getCurrentUserName(),
+    pagina:PAGE_META[currentSection]?.[0] || currentSection,
+    contexto:getCurrentContext(),
+    status,
+    texto:text,
+    enviadoPara:sendEmail ? email : '',
+    criadoEm:now.toISOString(),
+    criadoEmBR:now.toLocaleString('pt-BR')
+  };
+
+  const notes=getLocalNotes();
+  notes.unshift(note);
+  setLocalNotes(notes);
+  renderNotes(notes);
+
+  if(ANOTACOES_API_URL){
+    postNoteToAppsScript(note, sendEmail);
+  }
+
+  document.getElementById('noteText').value='';
+  if(!sendEmail) document.getElementById('noteEmail').value='';
+  alert(sendEmail ? 'Anotação salva e enviada para processamento de e-mail.' : 'Anotação salva.');
+}
+function postNoteToAppsScript(note, sendEmail){
+  const form=document.createElement('form');
+  form.method='POST';
+  form.action=ANOTACOES_API_URL;
+  form.target='gpsbiNotesFrame';
+  form.style.display='none';
+  const payload={...note, action: sendEmail ? 'send' : 'save'};
+  Object.entries(payload).forEach(([k,v])=>{
+    const input=document.createElement('input');
+    input.type='hidden'; input.name=k; input.value=v==null?'':String(v);
+    form.appendChild(input);
+  });
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(()=>form.remove(),1000);
 }
 
 /* ══════════════════════════════════
