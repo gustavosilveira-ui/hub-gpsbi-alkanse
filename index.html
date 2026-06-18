@@ -286,6 +286,51 @@ canvas{max-width:100%}
 .note-empty{border:1px dashed var(--border2);border-radius:10px;padding:1rem;text-align:center;color:var(--text3);font-size:11px}
 .notes-pill{display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(18,184,232,.22);background:rgba(18,184,232,.08);color:var(--accent);border-radius:999px;padding:4px 9px;font-size:10px;margin-top:6px}
 
+
+
+/* PÁGINA ANOTAÇÕES / CENTRAL DE AÇÕES */
+.actions-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:1rem}
+.action-kpi{background:var(--navy3);border:1px solid var(--border);border-radius:var(--radius);padding:.85rem 1rem;position:relative;overflow:hidden}
+.action-kpi::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:var(--kl,var(--accent))}
+.action-kpi-lbl{font-size:8.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.action-kpi-val{font-size:20px;font-weight:800;font-family:'DM Mono',monospace;color:var(--text)}
+.progress-card{background:var(--navy3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:1rem}
+.progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:11px;color:var(--text2)}
+.progress-bar{height:12px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:999px;transition:width .3s}
+.action-layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:1rem}
+.action-form{background:var(--navy3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;height:max-content}
+.action-board{background:var(--navy3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem}
+.action-field{margin-bottom:.7rem}
+.action-field label{display:block;font-size:8.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.action-input,.action-area,.action-select{width:100%;background:rgba(255,255,255,.045);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'Sora',sans-serif;font-size:11px;outline:none;padding:9px 10px}
+.action-area{min-height:110px;resize:vertical;line-height:1.45}
+.action-input:focus,.action-area:focus,.action-select:focus{border-color:var(--accent)}
+.action-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.action-btn{border:1px solid rgba(18,184,232,.28);background:rgba(18,184,232,.12);color:var(--accent);border-radius:8px;padding:8px 11px;font-size:10.5px;font-weight:700;font-family:'Sora',sans-serif;cursor:pointer;transition:.15s}
+.action-btn:hover{background:var(--accent);color:#071420}
+.action-btn.alt{background:rgba(255,255,255,.04);border-color:var(--border2);color:var(--text2)}
+.action-btn.alt:hover{border-color:var(--accent);color:var(--accent);background:rgba(18,184,232,.08)}
+.action-filters{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:.8rem}
+.action-chip{border:1px solid var(--border2);background:transparent;color:var(--text2);border-radius:999px;padding:5px 10px;font-size:10px;cursor:pointer}
+.action-chip.active{background:rgba(18,184,232,.15);border-color:rgba(18,184,232,.35);color:var(--accent);font-weight:700}
+.action-list{display:grid;gap:8px}
+.action-card{background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:10px;padding:.8rem}
+.action-card-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:.45rem}
+.action-card-title{font-size:12px;font-weight:700;color:var(--text);line-height:1.35}
+.action-card-text{font-size:11px;color:var(--text2);line-height:1.45;white-space:pre-wrap;margin:.35rem 0}
+.action-card-meta{display:flex;flex-wrap:wrap;gap:7px;font-size:8.8px;color:var(--text3);margin-top:.4rem}
+.status-pill{font-size:8.5px;border-radius:999px;padding:3px 8px;border:1px solid rgba(18,184,232,.22);color:var(--accent);background:rgba(18,184,232,.08);white-space:nowrap}
+.status-Pendente{color:var(--gold);border-color:rgba(240,192,64,.25);background:rgba(240,192,64,.08)}
+.status-Em\ acompanhamento{color:var(--accent)}
+.status-Respondido{color:#a78bfa;border-color:rgba(167,139,250,.25);background:rgba(167,139,250,.08)}
+.status-Resolvido,.status-Concluído{color:var(--pos);border-color:rgba(31,204,141,.25);background:rgba(31,204,141,.08)}
+.action-status-buttons{display:flex;gap:5px;flex-wrap:wrap;margin-top:.7rem}
+.action-mini{border:1px solid var(--border2);background:rgba(255,255,255,.035);border-radius:6px;color:var(--text2);font-size:9px;padding:5px 7px;cursor:pointer}
+.action-mini:hover{border-color:var(--accent);color:var(--accent)}
+.action-empty{border:1px dashed var(--border2);border-radius:10px;padding:1.2rem;text-align:center;color:var(--text3);font-size:11px}
+@media(max-width:1100px){.actions-grid{grid-template-columns:repeat(2,1fr)}.action-layout{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -346,6 +391,7 @@ canvas{max-width:100%}
       <div class="nav-item" onclick="goTo('tecnicos',this)"><span class="nav-ico">👷</span>Técnicos</div>
       <div class="nav-item" onclick="goTo('manutencao',this)"><span class="nav-ico">🔧</span>Manutenção</div>
       <div class="nav-item" onclick="goTo('financeiro',this)"><span class="nav-ico">💰</span>Financeiro</div>
+      <div class="nav-item" onclick="goTo('anotacoes',this)"><span class="nav-ico">📝</span>Anotações</div>
     </nav>
     <div class="s-bottom">
       <div class="s-user">
@@ -376,6 +422,7 @@ canvas{max-width:100%}
       <div class="section" id="sec-tecnicos"></div>
       <div class="section" id="sec-manutencao"></div>
       <div class="section" id="sec-financeiro"></div>
+      <div class="section" id="sec-anotacoes"></div>
     </div>
   </div>
 </div>
@@ -565,6 +612,7 @@ const PAGE_META = {
   tecnicos:   ['Técnicos','Equipe de campo · ao vivo'],
   manutencao: ['Manutenção','Ordens de serviço · ao vivo'],
   financeiro: ['Financeiro','Fluxo e lançamentos · ao vivo'],
+  anotacoes:  ['Anotações','Central de tarefas, follow-ups e decisões · GPSBI'],
 };
 
 function goTo(sec, el){
@@ -581,6 +629,7 @@ function goTo(sec, el){
 
 async function renderSection(key){
   try {
+    if(key === 'anotacoes'){ renderAnotacoesPage(); return; }
     const {cols, rows} = await loadTab(key);
     switch(key){
       case 'vendas':     renderVendas(cols, rows);     break;
@@ -590,6 +639,7 @@ async function renderSection(key){
       case 'tecnicos':   renderTecnicos(cols, rows);   break;
       case 'manutencao': renderManutencao(cols, rows); break;
       case 'financeiro': renderFinanceiro(cols, rows); break;
+      case 'anotacoes':  renderAnotacoesPage();          break;
     }
   } catch(e) {
     document.getElementById('sec-'+key).innerHTML = `
@@ -918,6 +968,116 @@ function postNoteToAppsScript(note, sendEmail){
   document.body.appendChild(form);
   form.submit();
   setTimeout(()=>form.remove(),1000);
+}
+
+
+
+function actionStatusClass(status){
+  return String(status || 'Pendente').replace(/[^a-zA-ZÀ-ÿ0-9 ]/g,'');
+}
+function actionIsDone(status){
+  return ['Respondido','Resolvido','Concluído'].includes(String(status || ''));
+}
+let actionStatusFilter='Todos';
+function getAllNotesForActions(){
+  return getLocalNotes();
+}
+function setActionFilter(status){
+  actionStatusFilter=status;
+  renderAnotacoesPage();
+}
+function saveActionFromPage(sendEmail){
+  const texto=(document.getElementById('actTexto')?.value || '').trim();
+  const email=(document.getElementById('actEmail')?.value || '').trim();
+  if(!texto){ alert('Escreva a anotação/tarefa antes de salvar.'); return; }
+  if(sendEmail && !email){ alert('Informe um e-mail para envio.'); return; }
+
+  const now=new Date();
+  const tipo=document.getElementById('actTipo')?.value || 'Anotação';
+  const responsavel=document.getElementById('actResp')?.value || '';
+  const prazo=document.getElementById('actPrazo')?.value || '';
+  const status=document.getElementById('actStatus')?.value || 'Pendente';
+  const titulo=document.getElementById('actTitulo')?.value || tipo;
+
+  const note={
+    id:'NT-'+now.getTime(), cliente:NOTES_CLIENTE, usuario:getCurrentUserName(),
+    pagina:'Anotações', contexto:getCurrentContext(), status, texto, titulo, tipo, responsavel, prazo,
+    enviadoPara:sendEmail ? email : '', criadoEm:now.toISOString(), criadoEmBR:now.toLocaleString('pt-BR')
+  };
+  const notes=getLocalNotes(); notes.unshift(note); setLocalNotes(notes);
+  if(ANOTACOES_API_URL){ postNoteToAppsScript(note, sendEmail); }
+  renderAnotacoesPage();
+  alert(sendEmail ? 'Tarefa salva e enviada por e-mail.' : 'Tarefa salva.');
+}
+function updateActionStatus(id,status){
+  const notes=getLocalNotes();
+  const idx=notes.findIndex(n=>String(n.id)===String(id));
+  if(idx>=0){
+    notes[idx].status=status;
+    notes[idx].statusAtualizadoEm=new Date().toLocaleString('pt-BR');
+    setLocalNotes(notes);
+  }
+  if(ANOTACOES_API_URL){
+    const cb='gpsbiStatusCb_'+Date.now();
+    window[cb]=function(){ try{} finally { delete window[cb]; const s=document.getElementById(cb); if(s) s.remove(); } };
+    const s=document.createElement('script');
+    s.id=cb;
+    s.src=`${ANOTACOES_API_URL}?action=status&id=${encodeURIComponent(id)}&status=${encodeURIComponent(status)}&callback=${cb}&_=${Date.now()}`;
+    document.body.appendChild(s);
+  }
+  renderAnotacoesPage();
+}
+function renderAnotacoesPage(){
+  const sec=document.getElementById('sec-anotacoes');
+  if(!sec) return;
+  const notes=getAllNotesForActions();
+  const total=notes.length;
+  const pend=notes.filter(n=>(n.status||'Pendente')==='Pendente').length;
+  const andamento=notes.filter(n=>(n.status||'')==='Em acompanhamento').length;
+  const respondido=notes.filter(n=>(n.status||'')==='Respondido').length;
+  const concl=notes.filter(n=>actionIsDone(n.status)).length;
+  const perc=total?Math.round(concl/total*100):0;
+  const statusList=['Todos','Pendente','Em acompanhamento','Respondido','Resolvido','Concluído'];
+  const filtered=notes.filter(n=>actionStatusFilter==='Todos' || (n.status||'Pendente')===actionStatusFilter);
+  sec.innerHTML=`
+    <div class="actions-grid anim">
+      <div class="action-kpi" style="--kl:var(--accent)"><div class="action-kpi-lbl">Total</div><div class="action-kpi-val">${total}</div></div>
+      <div class="action-kpi" style="--kl:var(--gold)"><div class="action-kpi-lbl">Pendentes</div><div class="action-kpi-val" style="color:var(--gold)">${pend}</div></div>
+      <div class="action-kpi" style="--kl:var(--accent)"><div class="action-kpi-lbl">Em andamento</div><div class="action-kpi-val" style="color:var(--accent)">${andamento}</div></div>
+      <div class="action-kpi" style="--kl:var(--pos)"><div class="action-kpi-lbl">Resolvidas / Respondidas</div><div class="action-kpi-val" style="color:var(--pos)">${concl}</div></div>
+    </div>
+    <div class="progress-card">
+      <div class="progress-row"><strong>Progresso geral das ações</strong><span>${perc}% concluído</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${perc}%"></div></div>
+    </div>
+    <div class="action-layout">
+      <div class="action-form">
+        <div class="card-title" style="margin-bottom:.8rem">Nova anotação / tarefa</div>
+        <div class="action-two"><div class="action-field"><label>Tipo</label><select class="action-select" id="actTipo"><option>Anotação</option><option>Tarefa</option><option>Pendência</option><option>Follow-up</option></select></div><div class="action-field"><label>Status</label><select class="action-select" id="actStatus"><option>Pendente</option><option>Em acompanhamento</option><option>Respondido</option><option>Resolvido</option><option>Concluído</option></select></div></div>
+        <div class="action-field"><label>Título</label><input class="action-input" id="actTitulo" placeholder="Ex: Validar queda de junho"></div>
+        <div class="action-two"><div class="action-field"><label>Responsável</label><input class="action-input" id="actResp" placeholder="Nome"></div><div class="action-field"><label>Prazo</label><input class="action-input" type="date" id="actPrazo"></div></div>
+        <div class="action-field"><label>E-mail para follow-up</label><input class="action-input" id="actEmail" placeholder="email@empresa.com.br"></div>
+        <div class="action-field"><label>Anotação</label><textarea class="action-area" id="actTexto" placeholder="Descreva a decisão, pendência ou próximo passo..."></textarea></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="action-btn" onclick="saveActionFromPage(false)">Salvar</button><button class="action-btn alt" onclick="saveActionFromPage(true)">Salvar e enviar e-mail</button></div>
+      </div>
+      <div class="action-board">
+        <div class="card-hdr"><div><div class="card-title">Acompanhamento</div><div class="card-sub">Clique no status para atualizar a evolução</div></div><button class="action-btn alt" onclick="loadNotes();renderAnotacoesPage()">↻ Atualizar</button></div>
+        <div class="action-filters">${statusList.map(s=>`<button class="action-chip ${actionStatusFilter===s?'active':''}" onclick="setActionFilter('${s}')">${s}</button>`).join('')}</div>
+        <div class="action-list">${filtered.length?filtered.map(n=>`
+          <div class="action-card">
+            <div class="action-card-top"><div class="action-card-title">${escapeHtml(n.titulo || n.tipo || 'Anotação')}</div><span class="status-pill status-${actionStatusClass(n.status)}">${escapeHtml(n.status || 'Pendente')}</span></div>
+            <div class="action-card-text">${escapeHtml(n.texto || '')}</div>
+            <div class="action-card-meta"><span>📅 ${escapeHtml(n.criadoEmBR || '-')}</span><span>👤 ${escapeHtml(n.responsavel || n.usuario || '-')}</span>${n.prazo?`<span>⏳ ${escapeHtml(n.prazo)}</span>`:''}${n.enviadoPara?`<span>✉️ ${escapeHtml(n.enviadoPara)}</span>`:''}</div>
+            <div class="action-status-buttons">
+              <button class="action-mini" onclick="updateActionStatus('${n.id}','Pendente')">Pendente</button>
+              <button class="action-mini" onclick="updateActionStatus('${n.id}','Em acompanhamento')">Em andamento</button>
+              <button class="action-mini" onclick="updateActionStatus('${n.id}','Respondido')">Respondido</button>
+              <button class="action-mini" onclick="updateActionStatus('${n.id}','Resolvido')">Resolvido</button>
+              <button class="action-mini" onclick="updateActionStatus('${n.id}','Concluído')">Concluído</button>
+            </div>
+          </div>`).join(''):'<div class="action-empty">Nenhuma ação encontrada para esse filtro.</div>'}</div>
+      </div>
+    </div>`;
 }
 
 /* ══════════════════════════════════
