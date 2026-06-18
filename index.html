@@ -215,6 +215,13 @@ html,body{font-family:'Sora',sans-serif;background:var(--navy);color:var(--text)
   opacity:1;
 }
 
+
+.sales-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;height:190px}
+.sales-mini-card{min-width:0;display:flex;flex-direction:column}
+.sales-mini-title{font-size:8.5px;color:var(--text2);text-transform:uppercase;letter-spacing:.75px;font-weight:700;margin-bottom:6px}
+.sales-mini-chart{position:relative;flex:1;min-height:0}
+@media(max-width:900px){.sales-mini-grid{grid-template-columns:1fr;height:360px}}
+
 /* TABELA */
 .tbl-wrap{overflow-x:auto}
 .tbl-scroll{max-height:300px;overflow-y:auto}
@@ -409,7 +416,6 @@ canvas{max-width:100%}
         <div class="pg-sub" id="pgSub">Faturamento · Alkanse · ao vivo</div>
       </div>
       <div class="topbar-right">
-        <button class="tbtn" onclick="openNotesPanel()" title="Anotações">📝 Anotações</button>
         <button class="tbtn" onclick="reloadSection()" title="Atualizar dados">↻ Atualizar</button>
         <div id="lastUpdate" style="font-size:9px;color:var(--text3)">Conectando...</div>
       </div>
@@ -692,6 +698,31 @@ function prevYearKey(mk){
   if(!mk) return null;
   const [mm,yyyy]=mk.split('/');
   return `${mm}/${parseInt(yyyy)-1}`;
+}
+
+function parseBRDate(d){
+  const m=String(d||'').match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  if(!m) return null;
+  return new Date(Number(m[3]), Number(m[2])-1, Number(m[1]));
+}
+function dateKeyISO(d){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function labelDia(d){
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+function weekStartDate(d){
+  const x=new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const day=x.getDay();
+  const diff=day===0 ? -6 : 1-day;
+  x.setDate(x.getDate()+diff);
+  return x;
+}
+function labelSemana(d){
+  const ini=weekStartDate(d);
+  const fim=new Date(ini);
+  fim.setDate(ini.getDate()+6);
+  return `${labelDia(ini)} - ${labelDia(fim)}`;
 }
 
 function sumMonthUntilDay(rows, cData, cFat, monthKey, limitDay){
@@ -1163,6 +1194,25 @@ function renderVendas(cols, allRows){
   rows.forEach(r=>{ const c=r[cCli]||'N/A'; byCli[c]=(byCli[c]||0)+pv(r[cFat]); });
   const topCli=Object.entries(byCli).sort((a,b)=>b[1]-a[1]).slice(0,5);
 
+  // Faturamento semanal e diário dentro do contexto filtrado do painel
+  const bySemana={}, byDia={};
+  rows.forEach(r=>{
+    const d=parseBRDate(r[cData]);
+    if(!d) return;
+    const val=pv(r[cFat]);
+
+    const wStart=weekStartDate(d);
+    const wKey=dateKeyISO(wStart);
+    if(!bySemana[wKey]) bySemana[wKey]={label:labelSemana(d), val:0};
+    bySemana[wKey].val+=val;
+
+    const dKey=dateKeyISO(d);
+    if(!byDia[dKey]) byDia[dKey]={label:labelDia(d), val:0};
+    byDia[dKey].val+=val;
+  });
+  const semanaDados=Object.keys(bySemana).sort().map(k=>bySemana[k]).slice(-12);
+  const diaDados=Object.keys(byDia).sort().map(k=>byDia[k]).slice(-31);
+
   document.getElementById('sec-vendas').innerHTML=`
     <!-- PERÍODO -->
     <div class="filtro-bar">
@@ -1208,7 +1258,18 @@ function renderVendas(cols, allRows){
     </div>
     <!-- GRÁFICOS -->
     <div class="grid2">
-      <div class="card" style="margin-bottom:0"><div class="card-hdr"><div class="card-title">Faturamento por mês</div></div><div class="chart-wrap" style="height:190px"><canvas id="cVndBar"></canvas></div></div>
+      <div class="card" style="margin-bottom:0">
+        <div class="sales-mini-grid">
+          <div class="sales-mini-card">
+            <div class="sales-mini-title">Faturamento por semana</div>
+            <div class="sales-mini-chart"><canvas id="cVndWeek"></canvas></div>
+          </div>
+          <div class="sales-mini-card">
+            <div class="sales-mini-title">Faturamento diário</div>
+            <div class="sales-mini-chart"><canvas id="cVndDay"></canvas></div>
+          </div>
+        </div>
+      </div>
       <div class="card" style="margin-bottom:0"><div class="card-hdr"><div class="card-title">Mix de tipos</div></div><div class="chart-wrap" style="height:165px"><canvas id="cVndDonut"></canvas></div></div>
     </div>
     <!-- TABELA CANAL -->
@@ -1286,8 +1347,10 @@ document.getElementById('evolChart').innerHTML = meses.map((mk, i) => {
 }).join('');
 
   requestAnimationFrame(()=>{
-    killChart('cVndBar');
-    charts.cVndBar=new Chart(document.getElementById('cVndBar'),{type:'bar',data:{labels:meses.map(m=>getMonthLabel(m)+'/'+m.split('/')[1].slice(2)),datasets:[{data:meses.map(m=>fatMes[m]||0),backgroundColor:meses.map(m=>m===(activeMonthFilter||lastMes)?'rgba(18,184,232,0.85)':'rgba(18,184,232,0.3)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtR(c.raw)}}},scales:{x:{ticks:{color:'#3d5570',font:{size:9}},grid:{color:'rgba(255,255,255,0.03)'}},y:{ticks:{color:'#3d5570',font:{size:9},callback:v=>fmtR(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+    killChart('cVndWeek');
+    charts.cVndWeek=new Chart(document.getElementById('cVndWeek'),{type:'bar',data:{labels:semanaDados.map(x=>x.label),datasets:[{data:semanaDados.map(x=>x.val),backgroundColor:'rgba(18,184,232,0.65)',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtR(c.raw)}}},scales:{x:{ticks:{color:'#3d5570',font:{size:8},maxRotation:45,minRotation:45},grid:{color:'rgba(255,255,255,0.03)'}},y:{ticks:{color:'#3d5570',font:{size:8},callback:v=>fmtR(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+    killChart('cVndDay');
+    charts.cVndDay=new Chart(document.getElementById('cVndDay'),{type:'line',data:{labels:diaDados.map(x=>x.label),datasets:[{data:diaDados.map(x=>x.val),borderColor:'#12b8e8',backgroundColor:'rgba(18,184,232,0.08)',fill:true,tension:.35,pointRadius:2,pointHoverRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtR(c.raw)}}},scales:{x:{ticks:{color:'#3d5570',font:{size:8},maxTicksLimit:8},grid:{display:false}},y:{ticks:{color:'#3d5570',font:{size:8},callback:v=>fmtR(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
     const tk=Object.keys(byTipo).slice(0,5);
     killChart('cVndDonut');
     charts.cVndDonut=new Chart(document.getElementById('cVndDonut'),{type:'doughnut',data:{labels:tk,datasets:[{data:tk.map(k=>byTipo[k]),backgroundColor:COLORS,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{color:'#7a96b2',font:{size:9},boxWidth:8,padding:6}}}}});
