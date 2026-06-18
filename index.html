@@ -158,8 +158,8 @@ html,body{font-family:'Sora',sans-serif;background:var(--navy);color:var(--text)
 }
 
 .evol-delta{
-  font-size:11px;
-  font-weight:700;
+  font-size:9px;
+  font-weight:600;
   line-height:1;
 }
 
@@ -185,18 +185,21 @@ html,body{font-family:'Sora',sans-serif;background:var(--navy);color:var(--text)
   border-color:rgba(18,184,232,0.5);
 }
 
+.evol-bar.muted{
+  opacity:.25;
+  filter:saturate(.4);
+}
+
 .evol-val{
-  font-size:10px;
-  font-weight:600;
-  color:var(--text2);
+  font-size:8px;
+  color:var(--text3);
   font-family:'DM Mono',monospace;
 }
 
 .evol-mes{
-  font-size:10px;
-  font-weight:600;
-  color:var(--text2);
-  margin-top:4px;
+  font-size:8.5px;
+  color:var(--text3);
+  margin-top:2px;
 }
 
 .evol-ano{
@@ -386,7 +389,7 @@ function doLogout(){
   document.getElementById('app').style.display='none';
   document.getElementById('loginScreen').style.display='flex';
   document.getElementById('lu').value=''; document.getElementById('lp').value='';
-  DATA={}; currentSection='vendas'; activeFilter='';
+  DATA={}; currentSection='vendas'; activeFilter=''; activeMonthFilter=''; activeGraphPeriodo='2025-2026';
 }
 
 /* ══════════════════════════════════
@@ -395,6 +398,8 @@ function doLogout(){
 let DATA = {};
 let currentSection = 'vendas';
 let activeFilter   = '';
+let activeMonthFilter = '';
+let activeGraphPeriodo = '2025-2026';
 const charts = {};
 
 async function fetchGviz(key){
@@ -601,8 +606,29 @@ function filterRowsByPeriodo(rows, cData){
   });
 }
 
+function filterRowsByPeriodoBase(rows, cData, periodo){
+  return rows.filter(r=>{
+    const d = String(r[cData]||'');
+    const m = d.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+    if(!m) return false;
+    const y=m[3];
+    if(periodo==='todos') return true;
+    if(periodo==='2026') return y==='2026';
+    if(periodo==='2025') return y==='2025';
+    if(periodo==='2025-2026') return y==='2025'||y==='2026';
+    if(periodo==='2024') return y==='2024';
+    if(periodo==='2023') return y==='2023';
+    if(periodo==='12m'){
+      const limite=new Date(); limite.setFullYear(limite.getFullYear()-1);
+      const rd=new Date(m[3],parseInt(m[2])-1,parseInt(m[1]));
+      return rd>=limite;
+    }
+    return true;
+  });
+}
+
 function setPeriodo(p){
-  vndPeriodo=p; vndDataDe=''; vndDataAte='';
+  vndPeriodo=p; vndDataDe=''; vndDataAte=''; activeMonthFilter=''; activeGraphPeriodo=p;
   document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
   const btn=document.getElementById('pb-'+p); if(btn) btn.classList.add('active');
   const de=document.getElementById('vndDe'); if(de) de.value='';
@@ -613,8 +639,49 @@ function applyDateRange(){
   const de=document.getElementById('vndDe').value;
   const ate=document.getElementById('vndAte').value;
   if(!de&&!ate) return;
+  activeMonthFilter='';
   vndDataDe=de; vndDataAte=ate; vndPeriodo='custom';
   document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
+  renderVendas(DATA.vendas.cols, DATA.vendas.rows);
+}
+function filtrarMesGrafico(mk){
+  if(activeMonthFilter === mk){
+    activeMonthFilter = '';
+    vndPeriodo = activeGraphPeriodo || '2025-2026';
+    vndDataDe = '';
+    vndDataAte = '';
+
+    const de = document.getElementById('vndDe');
+    const ate = document.getElementById('vndAte');
+    if(de) de.value = '';
+    if(ate) ate.value = '';
+
+    document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
+    const btn=document.getElementById('pb-'+vndPeriodo); if(btn) btn.classList.add('active');
+
+    renderVendas(DATA.vendas.cols, DATA.vendas.rows);
+    return;
+  }
+
+  if(vndPeriodo !== 'custom') activeGraphPeriodo = vndPeriodo;
+
+  const [mm, yyyy] = mk.split('/');
+  const primeiroDia = `${yyyy}-${mm}-01`;
+  const ultimoDiaNum = new Date(Number(yyyy), Number(mm), 0).getDate();
+  const ultimoDia = `${yyyy}-${mm}-${String(ultimoDiaNum).padStart(2,'0')}`;
+
+  activeMonthFilter = mk;
+  vndPeriodo = 'custom';
+  vndDataDe = primeiroDia;
+  vndDataAte = ultimoDia;
+
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
+
+  const de = document.getElementById('vndDe');
+  const ate = document.getElementById('vndAte');
+  if(de) de.value = vndDataDe;
+  if(ate) ate.value = vndDataAte;
+
   renderVendas(DATA.vendas.cols, DATA.vendas.rows);
 }
 let searchTimer;
@@ -629,28 +696,6 @@ function clearVndSearch(){
   activeFilter=''; renderVendas(DATA.vendas.cols,DATA.vendas.rows);
 }
 
-  function filtrarMesGrafico(mk){
-  const [mm, yyyy] = mk.split('/');
-
-  const primeiroDia = `${yyyy}-${mm}-01`;
-  const ultimoDiaNum = new Date(Number(yyyy), Number(mm), 0).getDate();
-  const ultimoDia = `${yyyy}-${mm}-${String(ultimoDiaNum).padStart(2,'0')}`;
-
-  vndPeriodo = 'custom';
-  vndDataDe = primeiroDia;
-  vndDataAte = ultimoDia;
-
-  const de = document.getElementById('vndDe');
-  const ate = document.getElementById('vndAte');
-
-  if(de) de.value = vndDataDe;
-  if(ate) ate.value = vndDataAte;
-
-  document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
-
-  renderVendas(DATA.vendas.cols, DATA.vendas.rows);
-}
-  
 /* ══════════════════════════════════
    VENDAS
 ══════════════════════════════════ */
@@ -670,9 +715,19 @@ function renderVendas(cols, allRows){
   const fatMesAll={};
   allRows.forEach(r=>{ const mk=getMonthKey(r[cData]); if(mk) fatMesAll[mk]=(fatMesAll[mk]||0)+pv(r[cFat]); });
 
-  // Agregar por mês (período filtrado)
+  // Agregar por mês para o gráfico de evolução
+  // Quando um mês é clicado, o painel filtra o mês, mas o gráfico continua mostrando o período base.
   const fatMes={};
-  rows.forEach(r=>{ const mk=getMonthKey(r[cData]); if(mk) fatMes[mk]=(fatMes[mk]||0)+pv(r[cFat]); });
+  let rowsGrafico = activeMonthFilter
+    ? filterRowsByPeriodoBase(allRows, cData, activeGraphPeriodo)
+    : rows;
+
+  if(activeFilter){
+    const f=activeFilter.toUpperCase();
+    rowsGrafico=rowsGrafico.filter(r=>(r[cCli]||'').toUpperCase().includes(f));
+  }
+
+  rowsGrafico.forEach(r=>{ const mk=getMonthKey(r[cData]); if(mk) fatMes[mk]=(fatMes[mk]||0)+pv(r[cFat]); });
 
   // Ordenação CRONOLÓGICA: por ano primeiro, depois por mês
   const meses=Object.keys(fatMes).sort((a,b)=>{
@@ -685,22 +740,23 @@ function renderVendas(cols, allRows){
   const clientes=new Set(rows.map(r=>r[cCli])).size;
   const ticket=nfs>0?fatTotal/nfs:0;
 
-  const fatLastMes=fatMes[lastMes]||0;
+  const mesComparacao = activeMonthFilter || lastMes;
+  const fatLastMes=fatMes[mesComparacao]||0;
 
-  const diasLastMes = rows
+  const diasLastMes = rowsGrafico
     .map(r => {
       const d = String(r[cData] || '');
       const m = d.match(/(\d{2})\/(\d{2})\/(\d{4})/);
       if(!m) return null;
       const rowMk = `${m[2]}/${m[3]}`;
-      return rowMk === lastMes ? parseInt(m[1]) : null;
+      return rowMk === mesComparacao ? parseInt(m[1]) : null;
     })
     .filter(Boolean);
 
   const diaLimiteLastMes = diasLastMes.length ? Math.max(...diasLastMes) : 31;
 
-  const fatPrevMes=sumMonthUntilDay(allRows,cData,cFat,prevMonthKey(lastMes),diaLimiteLastMes);
-  const fatPrevAnno=sumMonthUntilDay(allRows,cData,cFat,prevYearKey(lastMes),diaLimiteLastMes);
+  const fatPrevMes=sumMonthUntilDay(allRows,cData,cFat,prevMonthKey(mesComparacao),diaLimiteLastMes);
+  const fatPrevAnno=sumMonthUntilDay(allRows,cData,cFat,prevYearKey(mesComparacao),diaLimiteLastMes);
   const varMes=fatPrevMes>0?(fatLastMes-fatPrevMes)/fatPrevMes*100:null;
   const varAnno=fatPrevAnno>0?(fatLastMes-fatPrevAnno)/fatPrevAnno*100:null;
   const vmStr=varMes!=null?(varMes>=0?'+':'')+varMes.toFixed(1)+'%':'';
@@ -800,7 +856,7 @@ document.getElementById('evolChart').innerHTML = meses.map((mk, i) => {
   const mesAtual = getMonthLabel(mk);
 
   // Último dia com venda dentro do mês atual do gráfico
-  const diasDoMes = rows
+  const diasDoMes = rowsGrafico
     .map(r => {
       const d = String(r[cData] || '');
       const m = d.match(/(\d{2})\/(\d{2})\/(\d{4})/);
@@ -821,7 +877,7 @@ document.getElementById('evolChart').innerHTML = meses.map((mk, i) => {
 
   const pct = prev > 0 ? (val - prev) / prev * 100 : null;
   const h = Math.max(6, Math.round((val / maxF) * BAR));
-  const isLast = mk === lastMes;
+  const isLast = activeMonthFilter ? mk === activeMonthFilter : mk === lastMes;
 
   const ps = pct != null ? (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%' : '';
   const ud = pct != null ? (pct >= 0 ? '↑' : '↓') : '';
@@ -838,7 +894,7 @@ document.getElementById('evolChart').innerHTML = meses.map((mk, i) => {
     <div class="evol-col" title="${mesAtual}/${yy}: R$ ${fmtRFull(val)}" onclick="filtrarMesGrafico('${mk}')">
       <div class="evol-delta ${cls}">${ps} <span style="font-size:8px">${ud}</span></div>
       <div class="evol-val">${fmtRFull(val)}</div>
-      <div class="evol-bar${isLast ? ' hl' : ''}" style="height:${h}px"></div>
+      <div class="evol-bar${isLast ? ' hl' : ''}${activeMonthFilter && activeMonthFilter !== mk ? ' muted' : ''}" style="height:${h}px"></div>
       <div class="evol-mes">${mesAtual}</div>
       ${isNewYear ? `<div class="evol-ano destaque-ano">${yy}</div>` : `<div class="evol-ano">&nbsp;</div>`}
     </div>
@@ -847,7 +903,7 @@ document.getElementById('evolChart').innerHTML = meses.map((mk, i) => {
 
   requestAnimationFrame(()=>{
     killChart('cVndBar');
-    charts.cVndBar=new Chart(document.getElementById('cVndBar'),{type:'bar',data:{labels:meses.map(m=>getMonthLabel(m)+'/'+m.split('/')[1].slice(2)),datasets:[{data:meses.map(m=>fatMes[m]||0),backgroundColor:meses.map(m=>m===lastMes?'rgba(18,184,232,0.85)':'rgba(18,184,232,0.3)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtR(c.raw)}}},scales:{x:{ticks:{color:'#3d5570',font:{size:9}},grid:{color:'rgba(255,255,255,0.03)'}},y:{ticks:{color:'#3d5570',font:{size:9},callback:v=>fmtR(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+    charts.cVndBar=new Chart(document.getElementById('cVndBar'),{type:'bar',data:{labels:meses.map(m=>getMonthLabel(m)+'/'+m.split('/')[1].slice(2)),datasets:[{data:meses.map(m=>fatMes[m]||0),backgroundColor:meses.map(m=>m===(activeMonthFilter||lastMes)?'rgba(18,184,232,0.85)':'rgba(18,184,232,0.3)'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmtR(c.raw)}}},scales:{x:{ticks:{color:'#3d5570',font:{size:9}},grid:{color:'rgba(255,255,255,0.03)'}},y:{ticks:{color:'#3d5570',font:{size:9},callback:v=>fmtR(v)},grid:{color:'rgba(255,255,255,0.04)'}}}}});
     const tk=Object.keys(byTipo).slice(0,5);
     killChart('cVndDonut');
     charts.cVndDonut=new Chart(document.getElementById('cVndDonut'),{type:'doughnut',data:{labels:tk,datasets:[{data:tk.map(k=>byTipo[k]),backgroundColor:COLORS,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:true,position:'bottom',labels:{color:'#7a96b2',font:{size:9},boxWidth:8,padding:6}}}}});
