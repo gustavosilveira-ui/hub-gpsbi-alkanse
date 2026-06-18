@@ -335,6 +335,15 @@ canvas{max-width:100%}
 .action-status-buttons{display:flex;gap:5px;flex-wrap:wrap;margin-top:.7rem}
 .action-mini{border:1px solid var(--border2);background:rgba(255,255,255,.035);border-radius:6px;color:var(--text2);font-size:9px;padding:5px 7px;cursor:pointer}
 .action-mini:hover{border-color:var(--accent);color:var(--accent)}
+.action-mini.danger{border-color:rgba(232,75,75,.25);color:var(--neg)}
+.action-mini.danger:hover{background:rgba(232,75,75,.12);border-color:rgba(232,75,75,.55);color:var(--neg)}
+.action-mini.warn{border-color:rgba(240,192,64,.25);color:var(--gold)}
+.action-card.archived{opacity:.55;filter:saturate(.55)}
+.action-diary{background:var(--navy3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-top:1rem}
+.diary-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:.75rem}
+.diary-item{background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:10px;padding:.75rem}
+.diary-date{font-size:8.5px;color:var(--accent);font-family:'DM Mono',monospace;margin-bottom:4px}
+.diary-text{font-size:10.5px;color:var(--text2);line-height:1.4}
 .action-empty{border:1px dashed var(--border2);border-radius:10px;padding:1.2rem;text-align:center;color:var(--text3);font-size:11px}
 @media(max-width:1100px){.actions-grid{grid-template-columns:repeat(2,1fr)}.action-layout{grid-template-columns:1fr}}
 
@@ -1013,6 +1022,19 @@ let actionStatusFilter='Todos';
 function getAllNotesForActions(){
   return getLocalNotes();
 }
+function isArchivedAction(n){
+  return String(n.arquivada || '').toLowerCase() === 'sim';
+}
+function syncActionToCloud(action, params){
+  if(!ANOTACOES_API_URL) return;
+  const cb='gpsbiActionCb_'+Date.now()+Math.floor(Math.random()*999);
+  window[cb]=function(){ try{} finally { delete window[cb]; const s=document.getElementById(cb); if(s) s.remove(); } };
+  const q=new URLSearchParams({action, callback:cb, _ : Date.now()});
+  Object.entries(params || {}).forEach(([k,v])=>q.set(k, v==null?'':String(v)));
+  const sc=document.createElement('script');
+  sc.id=cb; sc.src=`${ANOTACOES_API_URL}?${q.toString()}`;
+  document.body.appendChild(sc);
+}
 function setActionFilter(status){
   actionStatusFilter=status;
   renderAnotacoesPage();
@@ -1058,21 +1080,69 @@ function updateActionStatus(id,status){
   }
   renderAnotacoesPage();
 }
+function archiveAction(id){
+  if(!confirm('Arquivar esta anotação? Ela sairá da visão principal, mas continuará no histórico.')) return;
+  const notes=getLocalNotes();
+  const idx=notes.findIndex(n=>String(n.id)===String(id));
+  if(idx>=0){
+    notes[idx].arquivada='Sim';
+    notes[idx].arquivadaEm=new Date().toLocaleString('pt-BR');
+    setLocalNotes(notes);
+  }
+  syncActionToCloud('archive',{id});
+  renderAnotacoesPage();
+}
+function deleteAction(id){
+  if(!confirm('Excluir definitivamente esta anotação? Essa ação não poderá ser desfeita.')) return;
+  const notes=getLocalNotes().filter(n=>String(n.id)!==String(id));
+  setLocalNotes(notes);
+  syncActionToCloud('delete',{id});
+  renderAnotacoesPage();
+}
+function resendActionEmail(id){
+  const notes=getLocalNotes();
+  const n=notes.find(x=>String(x.id)===String(id));
+  if(!n) return;
+  const email=prompt('Enviar/Reenviar para qual e-mail?', n.enviadoPara || '');
+  if(!email) return;
+  n.enviadoPara=email;
+  setLocalNotes(notes);
+  if(ANOTACOES_API_URL){ postNoteToAppsScript({...n, enviadoPara:email}, true); }
+  renderAnotacoesPage();
+  alert('E-mail enviado para processamento.');
+}
+function editAction(id){
+  const notes=getLocalNotes();
+  const n=notes.find(x=>String(x.id)===String(id));
+  if(!n) return;
+  const novo=prompt('Editar anotação:', n.texto || '');
+  if(novo===null) return;
+  n.texto=novo;
+  n.statusAtualizadoEm=new Date().toLocaleString('pt-BR');
+  setLocalNotes(notes);
+  alert('Edição salva no navegador. Para manter histórico auditável, a versão da planilha não é sobrescrita nesta etapa.');
+  renderAnotacoesPage();
+}
 function renderAnotacoesPage(){
   const sec=document.getElementById('sec-anotacoes');
   if(!sec) return;
   const notes=getAllNotesForActions();
-  const total=notes.length;
-  const pend=notes.filter(n=>(n.status||'Pendente')==='Pendente').length;
-  const andamento=notes.filter(n=>(n.status||'')==='Em acompanhamento').length;
-  const respondido=notes.filter(n=>(n.status||'')==='Respondido').length;
-  const concl=notes.filter(n=>actionIsDone(n.status)).length;
+  const activeNotes=notes.filter(n=>!isArchivedAction(n));
+  const archivedNotes=notes.filter(n=>isArchivedAction(n));
+  const total=activeNotes.length;
+  const pend=activeNotes.filter(n=>(n.status||'Pendente')==='Pendente').length;
+  const andamento=activeNotes.filter(n=>(n.status||'')==='Em acompanhamento').length;
+  const respondido=activeNotes.filter(n=>(n.status||'')==='Respondido').length;
+  const concl=activeNotes.filter(n=>actionIsDone(n.status)).length;
   const perc=total?Math.round(concl/total*100):0;
-  const statusList=['Todos','Pendente','Em acompanhamento','Respondido','Resolvido','Concluído'];
-  const filtered=notes.filter(n=>actionStatusFilter==='Todos' || (n.status||'Pendente')===actionStatusFilter);
+  const statusList=['Todos','Pendente','Em acompanhamento','Respondido','Resolvido','Concluído','Arquivadas'];
+  const filtered=(actionStatusFilter==='Arquivadas')
+    ? archivedNotes
+    : activeNotes.filter(n=>actionStatusFilter==='Todos' || (n.status||'Pendente')===actionStatusFilter);
+  const diary=activeNotes.filter(n=>actionIsDone(n.status)).slice(0,6);
   sec.innerHTML=`
     <div class="actions-grid anim">
-      <div class="action-kpi" style="--kl:var(--accent)"><div class="action-kpi-lbl">Total</div><div class="action-kpi-val">${total}</div></div>
+      <div class="action-kpi" style="--kl:var(--accent)"><div class="action-kpi-lbl">Ativas</div><div class="action-kpi-val">${total}</div><div style="font-size:9px;color:var(--text3);margin-top:2px">${archivedNotes.length} arquivadas</div></div>
       <div class="action-kpi" style="--kl:var(--gold)"><div class="action-kpi-lbl">Pendentes</div><div class="action-kpi-val" style="color:var(--gold)">${pend}</div></div>
       <div class="action-kpi" style="--kl:var(--accent)"><div class="action-kpi-lbl">Em andamento</div><div class="action-kpi-val" style="color:var(--accent)">${andamento}</div></div>
       <div class="action-kpi" style="--kl:var(--pos)"><div class="action-kpi-lbl">Resolvidas / Respondidas</div><div class="action-kpi-val" style="color:var(--pos)">${concl}</div></div>
@@ -1095,19 +1165,27 @@ function renderAnotacoesPage(){
         <div class="card-hdr"><div><div class="card-title">Acompanhamento</div><div class="card-sub">Clique no status para atualizar a evolução</div></div><button class="action-btn alt" onclick="loadNotes();renderAnotacoesPage()">↻ Atualizar</button></div>
         <div class="action-filters">${statusList.map(s=>`<button class="action-chip ${actionStatusFilter===s?'active':''}" onclick="setActionFilter('${s}')">${s}</button>`).join('')}</div>
         <div class="action-list">${filtered.length?filtered.map(n=>`
-          <div class="action-card">
-            <div class="action-card-top"><div class="action-card-title">${escapeHtml(n.titulo || n.tipo || 'Anotação')}</div><span class="status-pill status-${actionStatusClass(n.status)}">${escapeHtml(n.status || 'Pendente')}</span></div>
+          <div class="action-card ${isArchivedAction(n)?'archived':''}">
+            <div class="action-card-top"><div class="action-card-title">${escapeHtml(n.titulo || n.tipo || 'Anotação')}</div><span class="status-pill status-${isArchivedAction(n)?'Arquivada':actionStatusClass(n.status)}">${isArchivedAction(n)?'Arquivada':escapeHtml(n.status || 'Pendente')}</span></div>
             <div class="action-card-text">${escapeHtml(n.texto || '')}</div>
-            <div class="action-card-meta"><span>📅 ${escapeHtml(n.criadoEmBR || '-')}</span><span>👤 ${escapeHtml(n.responsavel || n.usuario || '-')}</span>${n.prazo?`<span>⏳ ${escapeHtml(n.prazo)}</span>`:''}${n.enviadoPara?`<span>✉️ ${escapeHtml(n.enviadoPara)}</span>`:''}</div>
+            <div class="action-card-meta"><span>📅 ${escapeHtml(n.criadoEmBR || '-')}</span><span>👤 ${escapeHtml(n.responsavel || n.usuario || '-')}</span>${n.prazo?`<span>⏳ ${escapeHtml(n.prazo)}</span>`:''}${n.enviadoPara?`<span>✉️ ${escapeHtml(n.enviadoPara)}</span>`:''}${n.arquivadaEm?`<span>🗄 ${escapeHtml(n.arquivadaEm)}</span>`:''}</div>
             <div class="action-status-buttons">
               <button class="action-mini" onclick="updateActionStatus('${n.id}','Pendente')">Pendente</button>
               <button class="action-mini" onclick="updateActionStatus('${n.id}','Em acompanhamento')">Em andamento</button>
               <button class="action-mini" onclick="updateActionStatus('${n.id}','Respondido')">Respondido</button>
               <button class="action-mini" onclick="updateActionStatus('${n.id}','Resolvido')">Resolvido</button>
               <button class="action-mini" onclick="updateActionStatus('${n.id}','Concluído')">Concluído</button>
+              <button class="action-mini" onclick="editAction('${n.id}')">✏️ Editar</button>
+              <button class="action-mini" onclick="resendActionEmail('${n.id}')">📧 E-mail</button>
+              <button class="action-mini warn" onclick="archiveAction('${n.id}')">🗄 Arquivar</button>
+              <button class="action-mini danger" onclick="deleteAction('${n.id}')">🗑 Excluir</button>
             </div>
           </div>`).join(''):'<div class="action-empty">Nenhuma ação encontrada para esse filtro.</div>'}</div>
       </div>
+    </div>
+    <div class="action-diary">
+      <div class="card-hdr"><div><div class="card-title">Diário Executivo</div><div class="card-sub">Últimas ações resolvidas/concluídas para manter histórico de decisões</div></div></div>
+      <div class="diary-list">${diary.length?diary.map(n=>`<div class="diary-item"><div class="diary-date">✓ ${escapeHtml(n.statusAtualizadoEm || n.criadoEmBR || '-')}</div><div class="diary-text"><strong>${escapeHtml(n.titulo || n.tipo || 'Ação')}</strong><br>${escapeHtml((n.texto || '').slice(0,120))}</div></div>`).join(''):'<div class="action-empty">Nenhuma ação concluída ainda.</div>'}</div>
     </div>`;
 }
 
