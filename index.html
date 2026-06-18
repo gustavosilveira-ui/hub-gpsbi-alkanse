@@ -128,17 +128,80 @@ html,body{font-family:'Sora',sans-serif;background:var(--navy);color:var(--text)
 .filter-badge button{background:none;border:none;color:var(--accent);cursor:pointer;font-size:12px}
 
 /* EVOLUÇÃO */
-.evol-wrap{overflow-x:auto;padding-bottom:.5rem}
-.evol-chart{display:flex;align-items:flex-end;gap:4px;min-width:max-content;padding:.5rem 0 0}
-.evol-col{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
-.evol-col:hover .evol-bar{filter:brightness(1.4)}
-.evol-delta{font-size:9px;font-weight:600;line-height:1}
-.evol-delta.up{color:var(--pos)}.evol-delta.dn{color:var(--neg)}
-.evol-bar{width:34px;border-radius:4px 4px 0 0;transition:all .3s;background:var(--navy4);border:1px solid var(--border2)}
-.evol-bar.hl{background:linear-gradient(180deg,rgba(18,184,232,0.9),rgba(18,184,232,0.5));border-color:rgba(18,184,232,0.5)}
-.evol-val{font-size:8px;color:var(--text3);font-family:'DM Mono',monospace}
-.evol-mes{font-size:8.5px;color:var(--text3);margin-top:2px}
-.evol-ano{font-size:7.5px;color:var(--text3);opacity:.5}
+.evol-wrap{
+  overflow-x:hidden;
+  padding-bottom:.5rem;
+  width:100%;
+}
+
+.evol-chart{
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+  width:100%;
+  min-width:100%;
+  padding:.5rem 0 0;
+}
+
+.evol-col{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  cursor:pointer;
+}
+
+.evol-col:hover .evol-bar{
+  filter:brightness(1.4);
+}
+
+.evol-delta{
+  font-size:9px;
+  font-weight:600;
+  line-height:1;
+}
+
+.evol-delta.up{color:var(--pos)}
+.evol-delta.dn{color:var(--neg)}
+
+.evol-bar{
+  width:70%;
+  max-width:42px;
+  min-width:22px;
+  border-radius:4px 4px 0 0;
+  transition:all .3s;
+  background:var(--navy4);
+  border:1px solid var(--border2);
+}
+
+.evol-bar.hl{
+  background:linear-gradient(
+    180deg,
+    rgba(18,184,232,0.9),
+    rgba(18,184,232,0.5)
+  );
+  border-color:rgba(18,184,232,0.5);
+}
+
+.evol-val{
+  font-size:8px;
+  color:var(--text3);
+  font-family:'DM Mono',monospace;
+}
+
+.evol-mes{
+  font-size:8.5px;
+  color:var(--text3);
+  margin-top:2px;
+}
+
+.evol-ano{
+  font-size:7.5px;
+  color:var(--text3);
+  opacity:.5;
+}
 
 /* TABELA */
 .tbl-wrap{overflow-x:auto}
